@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: repobanner-app
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Conexión automática al servicio 'redis' definido abajo
+      - REDIS_URL=redis://redis:6379
+      # Asegúrate de tener tu .env local o pasar la variable aquí
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    container_name: repobanner-redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  redis_data:

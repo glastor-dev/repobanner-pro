@@ -1,0 +1,7 @@
+{
+  "name": "RepoBanner Pro",
+  "description": "A high-performance repository asset generator. Create professional banners, social preview images, and dynamic badges for your GitHub projects using AI-powered content suggestions and real-time canvas editing.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
