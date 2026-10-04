@@ -30,7 +30,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.6.0",
-    "framer-motion": "^12.29.0",
+    "framer-motion": "^13.4.6",
     "helmet": "^7.1.0",
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.562.0",
