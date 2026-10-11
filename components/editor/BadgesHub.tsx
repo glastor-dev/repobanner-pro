@@ -19,15 +19,16 @@ const BadgesHub: React.FC<BadgesHubProps> = ({
   badges,
   badgeStyle,
   badgeAlignment,
-  secondaryColor,
+  secondaryColor: _secondaryColor,
   toggleBadge,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('stats');
 
   const categories = [
     { id: 'stats', label: 'Stats', icon: Hash },
+    { id: 'frameworks', label: 'Frameworks', icon: Code2 },
     { id: 'social', label: 'Social', icon: Share2 },
-    { id: 'tech', label: 'Tech', icon: Code2 },
+    { id: 'tech', label: 'Platforms', icon: Code2 },
     { id: 'funding', label: 'Funding', icon: Heart },
     { id: 'custom', label: 'Custom', icon: PenTool },
   ];

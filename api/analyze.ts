@@ -8,8 +8,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!apiKey) return res.status(500).json({ error: 'Missing GEMINI_API_KEY' });
   if (!rateLimit(req, res)) return;
-  const repoUrl = String(req.body?.repoUrl || '');
-  if (!repoUrl.includes('github.com')) return res.status(400).json({ error: 'Invalid repoUrl' });
+  const repoUrl = String(req.body?.repoUrl || '').trim();
+  const GITHUB_REPO_REGEX = /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+\/?$/;
+  if (!GITHUB_REPO_REGEX.test(repoUrl)) {
+    return res.status(400).json({ error: 'Invalid GitHub URL. Must be https://github.com/owner/repo' });
+  }
 
   const cacheKey = `analyze:${repoUrl}`;
   const cached = getCache(cacheKey);

@@ -89,14 +89,29 @@ app.use(express.json({ limit: '2mb' }));
 
 
 // Schemas de Validación (Zod)
+const GITHUB_REPO_REGEX = /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+\/?$/;
+
 const AnalyzeSchema = z.object({
-  repoUrl: z.string().url().includes('github.com', { message: 'Must be a GitHub URL' }),
+  repoUrl: z.string().url().regex(GITHUB_REPO_REGEX, {
+    message: 'Must be a valid GitHub repository URL (https://github.com/owner/repo)',
+  }),
 });
 
-
+const SocialSchema = z.object({
+  config: z.object({
+    title: z.string().optional().default('Project'),
+    subtitle: z.string().optional().default(''),
+    repoUrl: z.string().optional().default(''),
+    techIcons: z.array(z.string()).optional().default([]),
+  }),
+});
 
 const SaveBannerSchema = z.object({
-  config: z.record(z.any()), // Aceptamos cualquier objeto de configuración
+  config: z.object({
+    title: z.string().max(200),
+    subtitle: z.string().max(2000).optional().default(''),
+    repoUrl: z.string().url().max(500).optional().default(''),
+  }).passthrough(),
 });
 
 app.get('/api/health', (_req, res) => {
@@ -110,9 +125,13 @@ app.post('/api/analyze', async (req, res) => {
       return res.status(400).json({ error: validation.error.format() });
     }
     const { repoUrl } = validation.data;
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Missing GEMINI_API_KEY environment variable' });
+    }
 
     const data = await getCachedData(`analyze:${repoUrl}`, async () => {
-      const ai = new GoogleGenAI();
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `You are an expert UI/UX designer. Analyze this GitHub repo: ${repoUrl}.
@@ -152,6 +171,57 @@ The vibe should be professional for a tech portfolio.`,
     res.json(data);
   } catch (error: any) {
     logger.error('API /api/analyze error:', error);
+    res.status(500).json({ error: String(error?.message || error) });
+  }
+});
+
+app.post('/api/social', async (req, res) => {
+  try {
+    const validation = SocialSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ error: validation.error.format() });
+    }
+    const { config } = validation.data;
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'Missing GEMINI_API_KEY environment variable' });
+    }
+
+    const cacheKey = `social:${config.title}:${config.subtitle}:${config.repoUrl}:${config.techIcons.join(',')}`;
+    const data = await getCachedData(cacheKey, async () => {
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Create 3 social media captions for this GitHub project:
+Title: ${config.title}
+Subtitle: ${config.subtitle}
+URL: ${config.repoUrl}
+Tech: ${config.techIcons.join(', ')}
+
+Styles:
+1. Hype: Viral, emoji-rich, exciting.
+2. Professional: Serious, LinkedIn-ready, outcome-focused.
+3. Minimal: Short, punchy, developer-centric.`,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              hype: { type: Type.STRING },
+              professional: { type: Type.STRING },
+              minimal: { type: Type.STRING },
+            },
+            required: ['hype', 'professional', 'minimal'],
+          },
+        },
+      });
+
+      return JSON.parse(response.text || '{}');
+    });
+
+    res.json(data);
+  } catch (error: any) {
+    logger.error('API /api/social error:', error);
     res.status(500).json({ error: String(error?.message || error) });
   }
 });

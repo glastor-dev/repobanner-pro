@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { BannerSize, BannerPreset, BadgeType } from './types';
-import { THEMES, LAYOUTS, FONTS, PATTERNS, DEFAULT_PRESETS } from './constants';
+import { BannerSize, BannerPreset } from './types';
 import BannerCanvas from './components/BannerCanvas';
 import { getBadgeLinkData } from './services/badgeUtils';
 import { ToastContainer, ToastType } from './components/ui/Toast';
-import { Share2, Link as LinkIcon, Loader2, Download } from 'lucide-react';
+import { Share2, Loader2, Download } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
 import { useBannerStore } from './store/useBannerStore';
@@ -53,7 +52,7 @@ const App: React.FC = () => {
   } = useBannerStore();
 
   // History Management
-  const { state: historyConfig, push: pushHistory, undo, redo, canUndo, canRedo } = useHistory(config);
+  const { push: pushHistory, undo, redo, canUndo, canRedo } = useHistory(config);
   
   // Cloud Storage Hook
   const { saveBanner, loadBanner, isSaving, isLoading: isLoadingCloud } = useBannerStorage();
@@ -71,6 +70,7 @@ const App: React.FC = () => {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Sync history with active config
@@ -79,6 +79,7 @@ const App: React.FC = () => {
       pushHistory(config);
     }, 1000);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
   // Toast System
@@ -105,15 +106,9 @@ const App: React.FC = () => {
 
   // Services Hooks
   const { loading: analysisLoading, handleRepoAnalyze } = useRepositoryAnalysis(setConfig);
-  // Eliminar Social Suite AI y generación de copys IA
-  const socialLoading = false;
-  const socialCaptions = null;
-  const handleGenerateSocial = () => {};
 
   // Local State
   const [repoUrlTouched, setRepoUrlTouched] = useState(false);
-  // Eliminar generación de logo IA
-  const [logoLoading] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<BannerSize>(BannerSize.OPEN_GRAPH);
   const [customPresets, setCustomPresets] = useState<BannerPreset[]>([]);

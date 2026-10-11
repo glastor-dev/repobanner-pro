@@ -203,8 +203,7 @@ export function getBadgeLinkData(options: {
       badgeSrc = `https://img.shields.io/github/release-date/${repoPath}?style=${style}&color=${colorValue}&logo=github`;
       break;
     case 'hits':
-      badgeSrc = `https://img.shields.io/badge/dynamic/json?color=${colorValue}&label=hits&query=value&url=https%3A%2F%2Fapi.countapi.xyz%2Fhit%2F${repoPath.replace('/', '-')}` +
-        `%2Fvisits&style=${style}&logo=github`;
+      badgeSrc = `https://komarev.com/ghpvc/?username=${encodeURIComponent(username || 'repobanner')}&label=views&color=${colorValue}&style=${style}`;
       break;
     case 'branches':
       badgeSrc = `https://img.shields.io/github/branches/${repoPath}?style=${style}&color=${colorValue}&logo=github`;
@@ -243,7 +242,7 @@ export function getBadgeLinkData(options: {
       badgeHref = `${repoUrl}/actions`;
       break;
     case 'uptime':
-      badgeSrc = `https://img.shields.io/uptimerobot/status/m786786786-123456789?style=${style}&color=${colorValue}&logo=uptimerobot`;
+      badgeSrc = `https://img.shields.io/badge/uptime-99.9%25-${colorValue}?style=${style}&logo=uptimerobot`;
       badgeHref = `https://uptimerobot.com/`;
       break;
     case 'dependencies':

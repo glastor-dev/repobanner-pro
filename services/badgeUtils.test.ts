@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { getBadgeLinkData, SOCIAL_PLATFORMS, BADGE_GROUPS } from './badgeUtils';
+import { getBadgeLinkData } from './badgeUtils';
 import { BadgeItem } from '../types';
 
 describe('badgeUtils', () => {

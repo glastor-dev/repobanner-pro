@@ -90,7 +90,7 @@ const BannerCanvas: React.FC<BannerCanvasProps> = ({ config, size, onUpdateLogoP
 
       ctx.restore();
     }
-  }, [width, height, areaScale, config.primaryColor, config.secondaryColor, config.gradientEnabled, config.pattern, config.patternOpacity, bgImageObj]);
+  }, [width, height, areaScale, config.primaryColor, config.secondaryColor, config.gradientEnabled, config.pattern, config.patternOpacity, bgImageObj, config.bgBlur, config.bgBrightness, config.bgContrast]);
 
   // LAYER 2: Assets
   useEffect(() => {
@@ -210,7 +210,7 @@ const BannerCanvas: React.FC<BannerCanvasProps> = ({ config, size, onUpdateLogoP
     });
     ctx.restore();
 
-  }, [width, height, areaScale, config.title, config.subtitle, config.textColor, config.secondaryColor, config.fontFamily, config.layout, config.textPosition, config.textOutlineWidth, config.textOutlineColor, config.textGlowEnabled, config.textGlowColor, config.textGlowBlur]);
+  }, [width, height, areaScale, config.title, config.subtitle, config.textColor, config.secondaryColor, config.fontFamily, config.layout, config.textPosition, config.textOutlineWidth, config.textOutlineColor, config.textGlowEnabled, config.textGlowColor, config.textGlowBlur, config.techIcons]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
